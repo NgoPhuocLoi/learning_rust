@@ -1,4 +1,4 @@
-use std::net::TcpListener;
+use std::{io::Read, net::TcpListener};
 
 #[derive(Debug)]
 pub struct Server {
@@ -19,8 +19,18 @@ impl Server {
 
         loop {
             match listener.accept() {
-                Ok((stream, _)) => {
-                    println!("The comming stream: {stream:?}");
+                Ok((mut stream, _)) => {
+                    let mut buffer = [0; 1024];
+                    match stream.read(&mut buffer) {
+                        Ok(_) => {
+                            let request_text = String::from_utf8_lossy(&buffer);
+                            println!("Receiving a request....");
+                            println!("{}", request_text);
+                        }
+                        Err(e) => {
+                            println!("Error when reading a request, {}", e);
+                        }
+                    }
                 }
                 Err(e) => {
                     println!("Error happened: {}", e);
