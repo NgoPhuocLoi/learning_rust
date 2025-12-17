@@ -1,3 +1,4 @@
+use crate::http::Request;
 use std::{io::Read, net::TcpListener};
 
 #[derive(Debug)]
@@ -24,6 +25,7 @@ impl Server {
                     match stream.read(&mut buffer) {
                         Ok(_) => {
                             let request_text = String::from_utf8_lossy(&buffer);
+                            let request = Request::try_from(&buffer[..]);
                             println!("Receiving a request....");
                             println!("{}", request_text);
                         }
