@@ -14,8 +14,25 @@ impl TryFrom<&[u8]> for Request {
 
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
         let request = str::from_utf8(value).or(Err(ParsedError::InvalidEncoding))?;
+        let (method, request) = get_next_word(request).ok_or(ParsedError::InvalidEncoding)?;
+        let (path, request) = get_next_word(request).ok_or(ParsedError::InvalidEncoding)?;
+        let (protocol, _) = get_next_word(request).ok_or(ParsedError::InvalidEncoding)?;
+
+        if protocol != "HTTP/1.1" {
+            return Err(ParsedError::InvalidProtocal);
+        }
+
         unimplemented!();
     }
+}
+
+fn get_next_word(request: &str) -> Option<(&str, &str)> {
+    for (i, c) in request.chars().enumerate() {
+        if c == ' ' || c == '\r' {
+            return Some((&request[..i], &request[i + 1..]));
+        }
+    }
+    None
 }
 
 #[derive(Debug)]
