@@ -1,13 +1,15 @@
 use crate::http::method::MethodError;
+use crate::http::query_params::QueryParam;
 
 use super::Method;
 use std::fmt::Result as FmtResult;
 use std::str::{self, Utf8Error};
 use std::{convert::TryFrom, error::Error, fmt::Display, fmt::Formatter};
 
+#[derive(Debug)]
 pub struct Request<'buf> {
     path: &'buf str,
-    query_string: Option<&'buf str>,
+    query_params: Option<QueryParam<'buf>>,
     method: Method,
 }
 
@@ -28,14 +30,14 @@ impl<'buf> TryFrom<&'buf [u8]> for Request<'buf> {
 
         let mut q = None;
         if let Some(i) = path.find('?') {
-            q = Some(&path[i + 1..]);
+            q = Some(QueryParam::from(&path[i + 1..]));
             path = &path[..i];
         }
 
         Ok(Self {
             path: path,
             method,
-            query_string: q,
+            query_params: q,
         })
     }
 }

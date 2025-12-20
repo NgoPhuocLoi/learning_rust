@@ -28,6 +28,7 @@ impl Server {
                             let request = Request::try_from(&buffer[..]);
                             println!("Receiving a request....");
                             println!("{}", request_text);
+                            dbg!(request.unwrap());
                         }
                         Err(e) => {
                             println!("Error when reading a request, {}", e);
