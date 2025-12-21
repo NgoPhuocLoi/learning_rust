@@ -1,5 +1,8 @@
 use crate::http::Request;
-use std::{io::Read, net::TcpListener};
+use std::{
+    io::{Read, Write},
+    net::TcpListener,
+};
 
 #[derive(Debug)]
 pub struct Server {
@@ -29,6 +32,7 @@ impl Server {
                             println!("Receiving a request....");
                             println!("{}", request_text);
                             dbg!(request.unwrap());
+                            write!(stream, "HTTP/1.1 401 Not Found");
                         }
                         Err(e) => {
                             println!("Error when reading a request, {}", e);
