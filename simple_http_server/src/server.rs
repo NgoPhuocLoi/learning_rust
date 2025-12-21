@@ -1,5 +1,8 @@
-use crate::http::Request;
-use std::{io::Read, net::TcpListener};
+use crate::http::{response::Response, status_code::StatusCode, Request};
+use std::{
+    io::{Read, Write},
+    net::TcpListener,
+};
 
 #[derive(Debug)]
 pub struct Server {
@@ -26,9 +29,13 @@ impl Server {
                         Ok(_) => {
                             let request_text = String::from_utf8_lossy(&buffer);
                             let request = Request::try_from(&buffer[..]);
-                            println!("Receiving a request....");
-                            println!("{}", request_text);
+
                             dbg!(request.unwrap());
+                            let response = Response::new(
+                                StatusCode::Ok,
+                                Some(String::from("<h1>Hello there</h1>")),
+                            );
+                            response.send(&mut stream);
                         }
                         Err(e) => {
                             println!("Error when reading a request, {}", e);
