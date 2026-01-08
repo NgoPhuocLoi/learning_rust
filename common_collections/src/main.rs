@@ -1,4 +1,4 @@
-fn main() {
+fn test_vec() {
     let mut v: Vec<i32> = Vec::new();
 
     v.push(1);
@@ -17,4 +17,33 @@ fn main() {
     for i in &mut v {
         println!("Item: {}", *i);
     }
+}
+
+fn test_string() {
+    let mut s1 = String::from("New string");
+    let s2 = String::from("S2");
+
+    s1.push('C');
+
+    s1.push_str(" Hehehe");
+
+    let mut s3 = s1 + &s2;
+
+    // println!("{s1}"); s1 has been moved
+
+    s3 = format!("{s3}-new--hehe");
+
+    println!("{s3}");
+
+    for c in "Зд".chars() {
+        println!("{c}");
+    }
+
+    for b in "Зд".bytes() {
+        println!("{b}");
+    }
+}
+
+fn main() {
+    test_string();
 }
