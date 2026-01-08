@@ -44,6 +44,36 @@ fn test_string() {
     }
 }
 
+fn test_hash_map() {
+    use std::collections::HashMap;
+
+    let mut m = HashMap::new();
+
+    m.insert("Yellow", 30);
+    m.insert("blue", 50);
+
+    println!("{:?}", m);
+
+    let blue_ccore = m.get("blue").copied().unwrap();
+
+    println!("blue score is: {}", blue_ccore);
+
+    for (key, value) in &m {
+        println!("Key {} = {}", key, value);
+    }
+
+    // Replace existing key
+    m.insert("blue", 100);
+
+    // Add if not exist
+    m.entry("blue").or_insert(2000);
+
+    let bc = m.entry("blue").or_default();
+
+    *bc += 1000;
+
+    println!("{:?}", m);
+}
 fn main() {
-    test_string();
+    test_hash_map();
 }
