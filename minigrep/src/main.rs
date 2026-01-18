@@ -33,13 +33,14 @@ impl Config {
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    let config = Config::build(&args).unwrap_or_else(|e| {
+    let config = Config::build(&args).unwrap_or_else(|err| {
+        eprintln!("Problem parsing arguments: {err}");
         print_usage();
         process::exit(1);
     });
 
     if let Err(err) = run(config) {
-        println!("Error happened: {}", err);
+        eprintln!("Error happened: {}", err);
         process::exit(1);
     }
 }
@@ -51,6 +52,8 @@ fn run(config: Config) -> Result<(), Box<dyn Error>> {
     } else {
         search(&config.query, &content)
     };
-    dbg!(result);
+    for line in result {
+        println!("{line}");
+    }
     Ok(())
 }

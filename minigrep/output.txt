@@ -1,0 +1,1 @@
+minigrep <query_string> <file_path>
