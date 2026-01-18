@@ -4,6 +4,7 @@ use std::fs;
 use std::process;
 
 use minigrep::search;
+use minigrep::search_case_insensitive;
 
 fn print_usage() {
     println!("minigrep <query_string> <file_path>")
@@ -12,6 +13,7 @@ fn print_usage() {
 struct Config {
     query: String,
     file_path: String,
+    ignore_case: bool,
 }
 
 impl Config {
@@ -19,9 +21,11 @@ impl Config {
         if args.len() < 3 {
             return Err("Not enough args");
         }
+        let ignore_case = env::var("IGNORE_CASE").is_ok();
         Ok(Config {
             query: args[1].clone(),
             file_path: args[2].clone(),
+            ignore_case,
         })
     }
 }
@@ -42,7 +46,11 @@ fn main() {
 
 fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let content = fs::read_to_string(config.file_path)?;
-    let result = search(&config.query, &content);
+    let result = if config.ignore_case {
+        search_case_insensitive(&config.query, &content)
+    } else {
+        search(&config.query, &content)
+    };
     dbg!(result);
     Ok(())
 }
