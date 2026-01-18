@@ -1,8 +1,11 @@
 use std::env;
+use std::error::Error;
 use std::fs;
 use std::io::Read;
 use std::path::Path;
 use std::process;
+
+use minigrep::search;
 
 fn print_usage() {
     println!("minigrep <query_string> <file_path>")
@@ -33,6 +36,14 @@ fn main() {
         process::exit(1);
     });
 
-    let content = fs::read_to_string(config.file_path).expect("Can not read content of the file");
-    dbg!(content);
+    if let Err(err) = run(config) {
+        println!("Error happened: {}", err);
+        process::exit(1);
+    }
+}
+
+fn run(config: Config) -> Result<(), Box<dyn Error>> {
+    let content = fs::read_to_string(config.file_path)?;
+    search(&config.query, &content);
+    Ok(())
 }
