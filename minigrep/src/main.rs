@@ -1,8 +1,6 @@
 use std::env;
 use std::error::Error;
 use std::fs;
-use std::io::Read;
-use std::path::Path;
 use std::process;
 
 use minigrep::search;
@@ -44,6 +42,7 @@ fn main() {
 
 fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let content = fs::read_to_string(config.file_path)?;
-    search(&config.query, &content);
+    let result = search(&config.query, &content);
+    dbg!(result);
     Ok(())
 }
