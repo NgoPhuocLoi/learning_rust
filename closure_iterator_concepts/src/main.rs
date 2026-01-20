@@ -34,6 +34,13 @@ impl Inventory {
     }
 }
 
+fn closure_inferring_type() {
+    let example_closure = |x| x;
+    let x1 = example_closure("Hello");
+    println!("{x1}");
+    // let x2 = example_closure(5); => Err
+}
+
 fn main() {
     let inventory = Inventory {
         shirts: vec![ShirtColor::Red, ShirtColor::Blue, ShirtColor::Red],
@@ -48,4 +55,6 @@ fn main() {
     let gift_2 = inventory.giveaway(user_preference_2);
 
     println!("The gift_1 is {:?}", gift_2);
+
+    closure_inferring_type();
 }
