@@ -7,12 +7,19 @@ fn main() {
 
     thread::spawn(move || {
         let s = String::from("Hi!");
-        thread::sleep(Duration::from_secs(3));
+        thread::sleep(Duration::from_secs(1));
+        tx.send(s).unwrap();
+
+        let s = String::from("World!");
+        thread::sleep(Duration::from_secs(1));
+        tx.send(s).unwrap();
+
+        let s = String::from("12345!");
+        thread::sleep(Duration::from_secs(1));
         tx.send(s).unwrap();
     });
 
-    // rx.revc() -> block the current thread, wait until there is some data
-    // rx.try_recv() -> does not block the current thread, return immediately Result<T, E>
-    let receive = rx.recv().unwrap();
-    println!("Got: {receive}");
+    for receive in rx {
+        println!("Got: {receive}");
+    }
 }
