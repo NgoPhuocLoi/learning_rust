@@ -1,13 +1,18 @@
+use std::sync::mpsc;
 use std::thread;
+use std::time::Duration;
 
 fn main() {
-    let v = vec![1, 2, 3];
+    let (tx, rx) = mpsc::channel();
 
     thread::spawn(move || {
-        println!("The vector in main thread id  {:?}", v);
-    })
-    .join()
-    .unwrap();
+        let s = String::from("Hi!");
+        thread::sleep(Duration::from_secs(3));
+        tx.send(s).unwrap();
+    });
 
-    // println!("{:?}", v); => v no longer can be used
+    // rx.revc() -> block the current thread, wait until there is some data
+    // rx.try_recv() -> does not block the current thread, return immediately Result<T, E>
+    let receive = rx.recv().unwrap();
+    println!("Got: {receive}");
 }
