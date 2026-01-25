@@ -1,16 +1,13 @@
 use std::thread;
-use std::time::Duration;
 
 fn main() {
-    let handler = thread::spawn(|| {
-        for i in 1..10 {
-            println!("Printing in the spawned thread: {}", i);
-            thread::sleep(Duration::from_millis(1));
-        }
-    });
-    for i in 1..5 {
-        println!("hi number {i} from the main thread!");
-        thread::sleep(Duration::from_millis(1));
-    }
-    handler.join().unwrap();
+    let v = vec![1, 2, 3];
+
+    thread::spawn(move || {
+        println!("The vector in main thread id  {:?}", v);
+    })
+    .join()
+    .unwrap();
+
+    // println!("{:?}", v); => v no longer can be used
 }
