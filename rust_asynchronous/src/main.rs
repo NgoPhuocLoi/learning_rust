@@ -42,6 +42,24 @@ async fn thread_like_using_async() {
     handler.await.unwrap();
 }
 
+async fn join_futures() {
+    let fut_1 = async {
+        for i in 1..10 {
+            println!("The i is {i} in the first task");
+            trpl::sleep(Duration::from_millis(500)).await;
+        }
+    };
+
+    let fut_2 = async {
+        for i in 1..5 {
+            println!("The i is {i} in the second task");
+            trpl::sleep(Duration::from_millis(500)).await;
+        }
+    };
+
+    trpl::join(fut_1, fut_2).await;
+}
+
 fn main() {
     trpl::block_on(async {
         join_futures().await;
