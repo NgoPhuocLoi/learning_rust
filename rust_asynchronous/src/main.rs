@@ -50,10 +50,31 @@ async fn join_futures() {
         }
     };
 
-    let fut_2 = async {
+    {
         for i in 1..5 {
             println!("The i is {i} in the second task");
             trpl::sleep(Duration::from_millis(500)).await;
+        }
+    };
+    fut_1.await;
+    // trpl::join(fut_1, fut_2).await;
+}
+
+async fn message_passing_between_futures() {
+    let (tx, mut rx) = trpl::channel();
+
+    let values = vec!["value 1", "value 2", "value 3"];
+
+    let fut_1 = async {
+        for val in values {
+            tx.send(val).unwrap();
+            trpl::sleep(Duration::from_millis(500)).await;
+        }
+    };
+
+    let fut_2 = async {
+        while let Some(v) = rx.recv().await {
+            println!("Value comming: {v}");
         }
     };
 
@@ -62,6 +83,6 @@ async fn join_futures() {
 
 fn main() {
     trpl::block_on(async {
-        join_futures().await;
+        message_passing_between_futures().await;
     })
 }
