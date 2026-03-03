@@ -81,8 +81,40 @@ async fn message_passing_between_futures() {
     trpl::join(fut_1, fut_2).await;
 }
 
+async fn using_join_macro() {
+    let (tx, mut rx) = trpl::channel();
+
+    let tx1 = tx.clone();
+
+    let fut_1 = async move {
+        let data = vec!["Hi", "from", "Loi"];
+
+        for val in data {
+            tx1.send(val).unwrap();
+            trpl::sleep(Duration::from_secs(1)).await;
+        }
+    };
+
+    let fut_2 = async {
+        while let Some(val) = rx.recv().await {
+            println!("Received message: {val}");
+        }
+    };
+
+    let fut_3 = async move {
+        let data = vec!["and", "have", "a good day"];
+
+        for val in data {
+            tx.send(val).unwrap();
+            trpl::sleep(Duration::from_secs(1)).await;
+        }
+    };
+
+    trpl::join!(fut_1, fut_3, fut_2);
+}
+
 fn main() {
     trpl::block_on(async {
-        message_passing_between_futures().await;
+        using_join_macro().await;
     })
 }
