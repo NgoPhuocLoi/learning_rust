@@ -2,6 +2,8 @@ use std::{
     fs,
     io::{BufRead, BufReader, Write},
     net::{TcpListener, TcpStream},
+    thread,
+    time::Duration,
 };
 
 use simple_multi_thread_http_server::ThreadPool;
@@ -18,10 +20,13 @@ fn handle_connection(mut stream: TcpStream) {
 
     println!("{first_line}");
 
-    let (status_line, file_name) = if first_line == "GET / HTTP/1.1" {
-        ("HTTP/1.1 200 OK", "hello.html")
-    } else {
-        ("HTTP/1.1 400 NOT FOUND", "404.html")
+    let (status_line, file_name) = match &first_line[..] {
+        "GET / HTTP/1.1" => ("HTTP/1.1 200 OK", "hello.html"),
+        "GET /sleep HTTP/1.1" => {
+            thread::sleep(Duration::from_secs(10));
+            ("HTTP/1.1 200 OK", "hello.html")
+        }
+        _ => ("HTTP/1.1 400 NOT FOUND", "404.html"),
     };
 
     let content = fs::read_to_string(file_name).unwrap();
