@@ -4,6 +4,8 @@ use std::{
     net::{TcpListener, TcpStream},
 };
 
+use simple_multi_thread_http_server::ThreadPool;
+
 fn handle_connection(mut stream: TcpStream) {
     let buf = BufReader::new(&stream);
     let http_requests: Vec<String> = buf
@@ -34,8 +36,11 @@ fn handle_connection(mut stream: TcpStream) {
 
 fn main() {
     let listener = TcpListener::bind("localhost:9999").unwrap();
+    let pool = ThreadPool::new(4);
 
     for stream in listener.incoming() {
-        handle_connection(stream.unwrap());
+        pool.execute(|| {
+            handle_connection(stream.unwrap());
+        });
     }
 }
